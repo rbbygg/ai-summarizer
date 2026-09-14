@@ -12,16 +12,18 @@ app.post("/api/summarize", async (req, res) => {
     const text = req.body.text;
 
     if (!text || !text.trim()) {
-      return res.status(400).json({ error: "請先輸入文字" });
+      return res.status(400).json({
+        error: "請先輸入文字"
+      });
     }
 
     const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" +
-        process.env.GEMINI_API_KEY,
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent",
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "x-goog-api-key": process.env.GEMINI_API_KEY
         },
         body: JSON.stringify({
           contents: [
@@ -49,10 +51,12 @@ ${text}`
 
     const data = await response.json();
 
+    console.log("Gemini response:", JSON.stringify(data));
+
     if (!response.ok) {
-      console.error(data);
       return res.status(500).json({
-        error: "Gemini API 呼叫失敗"
+        error: "Gemini API 呼叫失敗",
+        details: data
       });
     }
 
@@ -60,18 +64,22 @@ ${text}`
       data.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!summary) {
-      console.error(data);
       return res.status(500).json({
-        error: "Gemini 沒有返回摘要"
+        error: "Gemini 沒有返回摘要",
+        details: data
       });
     }
 
-    res.json({ summary });
+    res.json({
+      summary: summary
+    });
 
   } catch (error) {
-    console.error(error);
+    console.error("Server error:", error);
+
     res.status(500).json({
-      error: "AI 摘要失敗，請稍後再試"
+      error: "伺服器發生錯誤",
+      details: error.message
     });
   }
 });
