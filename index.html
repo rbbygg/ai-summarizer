@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,36 +11,29 @@
       max-width: 800px;
       margin: 40px auto;
       padding: 20px;
-      background: #f5f5f5;
-    }
-
-    h1 {
-      text-align: center;
     }
 
     textarea {
       width: 100%;
       height: 300px;
-      padding: 12px;
-      box-sizing: border-box;
+      padding: 10px;
       font-size: 16px;
-      resize: vertical;
+      box-sizing: border-box;
     }
 
     button {
-      width: 100%;
       margin-top: 15px;
-      padding: 14px;
+      padding: 12px 24px;
       font-size: 16px;
       cursor: pointer;
     }
 
     #result {
-      margin-top: 20px;
-      padding: 20px;
-      background: white;
-      min-height: 100px;
+      margin-top: 25px;
+      padding: 15px;
+      border: 1px solid #ccc;
       white-space: pre-wrap;
+      min-height: 100px;
     }
   </style>
 </head>
@@ -51,22 +44,48 @@
 
   <textarea id="text" placeholder="把文章貼在這裡..."></textarea>
 
-  <button onclick="summarize()">開始摘要</button>
+  <br>
 
-  <div id="result">摘要結果會出現在這裡。</div>
+  <button id="summarizeBtn">開始摘要</button>
+
+  <div id="result">摘要會顯示在這裡</div>
 
   <script>
-    function summarize() {
-      const text = document.getElementById("text").value;
+    document.getElementById("summarizeBtn").addEventListener("click", async () => {
 
-      if (!text.trim()) {
-        document.getElementById("result").textContent = "請先輸入文字。";
+      const text = document.getElementById("text").value.trim();
+      const result = document.getElementById("result");
+
+      if (!text) {
+        result.textContent = "請先輸入文字";
         return;
       }
 
-      document.getElementById("result").textContent =
-        "收到文字了。AI 功能下一步接上。";
-    }
+      result.textContent = "AI 摘要中，請稍候...";
+
+      try {
+        const response = await fetch("/api/summarize", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            text: text
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "摘要失敗");
+        }
+
+        result.textContent = data.summary;
+
+      } catch (error) {
+        result.textContent = "錯誤：" + error.message;
+      }
+    });
   </script>
 
 </body>
