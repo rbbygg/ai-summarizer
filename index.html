@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 長文摘要</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    textarea {
+      width: 100%;
+      height: 300px;
+      padding: 12px;
+      box-sizing: border-box;
+      font-size: 16px;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 14px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 20px;
+      background: white;
+      min-height: 100px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>AI 長文摘要</h1>
+
+  <textarea id="text" placeholder="把文章貼在這裡..."></textarea>
+
+  <button onclick="summarize()">開始摘要</button>
+
+  <div id="result">摘要結果會出現在這裡。</div>
+
+  <script>
+    function summarize() {
+      const text = document.getElementById("text").value;
+
+      if (!text.trim()) {
+        document.getElementById("result").textContent = "請先輸入文字。";
+        return;
+      }
+
+      document.getElementById("result").textContent =
+        "收到文字了。AI 功能下一步接上。";
+    }
+  </script>
+
+</body>
+</html>
